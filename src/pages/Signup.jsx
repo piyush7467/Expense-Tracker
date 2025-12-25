@@ -70,7 +70,7 @@ const Signup = () => {
 
   const handleSignup = async (e) => {
     e.preventDefault();
-    
+
     if (!formData.name || !formData.email || !formData.password) {
       toast.warning("Please fill all required fields");
       return;
@@ -81,20 +81,23 @@ const Signup = () => {
       return;
     }
 
-    if (formData.password.length < 6) {
-      toast.error("Password must be at least 6 characters long");
+    if (formData.password.length < 8) {
+      toast.error("Password must be at least 8 characters long");
       return;
     }
 
+
+
     setIsLoading(true);
     try {
+      
       const res = await axios.post(
         "https://vercel-backend-one-sepia.vercel.app/api/user/signup",
         {
           name: formData.name,
           email: formData.email,
           password: formData.password
-        }
+        }, { withCredentials: true }
       );
       toast.success("Account created successfully! Please login.");
       navigate("/login");
@@ -109,10 +112,10 @@ const Signup = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
       <ToastContainer position="top-center" autoClose={2000} />
-      
+
       {/* Main Container */}
       <div className="flex flex-col md:flex-row w-full max-w-4xl rounded-2xl overflow-hidden shadow-2xl">
-        
+
         {/* Left Side - Brand/Image Section */}
         <div className="hidden md:flex md:w-1/2 bg-gradient-to-br from-green-600 to-emerald-700 items-center justify-center p-8">
           <div className="text-white text-center">
@@ -194,7 +197,7 @@ const Signup = () => {
                   className="peer pt-8 pb-3 px-4 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white pr-12"
                   placeholder=" "
                   required
-                  minLength="6"
+                  minLength="8"
                 />
                 <label className="absolute top-2 left-4 text-sm text-gray-500 transition-all duration-200 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-2 peer-focus:text-sm peer-focus:text-green-600 pointer-events-none">
                   Password
@@ -206,7 +209,7 @@ const Signup = () => {
                 >
                   {showPassword ? "🙈" : "👁️"}
                 </button>
-                
+
                 {/* Password Strength Indicator */}
                 {formData.password && (
                   <div className="mt-2">
@@ -214,12 +217,11 @@ const Signup = () => {
                       <span>{getPasswordStrengthText()}</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-1.5">
-                      <div 
-                        className={`h-1.5 rounded-full transition-all duration-300 ${getPasswordStrengthColor()} ${
-                          passwordStrength === "strong" ? "w-full" : 
-                          passwordStrength === "medium" ? "w-2/3" : 
-                          passwordStrength === "weak" ? "w-1/3" : "w-0"
-                        }`}
+                      <div
+                        className={`h-1.5 rounded-full transition-all duration-300 ${getPasswordStrengthColor()} ${passwordStrength === "strong" ? "w-full" :
+                            passwordStrength === "medium" ? "w-2/3" :
+                              passwordStrength === "weak" ? "w-1/3" : "w-0"
+                          }`}
                       ></div>
                     </div>
                   </div>
@@ -247,17 +249,16 @@ const Signup = () => {
                 >
                   {showConfirmPassword ? "🙈" : "👁️"}
                 </button>
-                
+
                 {/* Password Match Indicator */}
                 {formData.confirmPassword && (
                   <div className="mt-1">
-                    <span className={`text-xs ${
-                      formData.password === formData.confirmPassword 
-                        ? "text-green-600" 
+                    <span className={`text-xs ${formData.password === formData.confirmPassword
+                        ? "text-green-600"
                         : "text-red-600"
-                    }`}>
-                      {formData.password === formData.confirmPassword 
-                        ? "✓ Passwords match" 
+                      }`}>
+                      {formData.password === formData.confirmPassword
+                        ? "✓ Passwords match"
                         : "✗ Passwords don't match"
                       }
                     </span>

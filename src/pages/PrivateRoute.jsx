@@ -1,16 +1,37 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
+import axios from "axios";
 
-// PrivateRoute wrapper component
 const PrivateRoute = ({ children }) => {
-  const token = localStorage.getItem("token"); // check if user is logged in
+  const [isAuthenticated, setIsAuthenticated] = useState(null); // null = loading
 
-  if (!token) {
-    // if not logged in, redirect to login
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        await axios.get(
+          "https://vercel-backend-one-sepia.vercel.app/api/user/me",
+          { withCredentials: true }
+        );
+        setIsAuthenticated(true);
+      } catch (error) {
+        setIsAuthenticated(false);
+      }
+    };
+
+    checkAuth();
+  }, []);
+
+  // While checking auth, don't render anything
+  if (isAuthenticated === null) {
+    return null; // or loading spinner
+  }
+
+  // Not authenticated → redirect
+  if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
 
-  // if logged in, render the children component
+  // Authenticated → allow access
   return children;
 };
 
