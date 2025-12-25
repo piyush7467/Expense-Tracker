@@ -171,13 +171,12 @@ function Home() {
       <ToastContainer position={isMobile ? "top-center" : "top-right"} autoClose={3000} />
 
       {/* Header */}
-      <header className="bg-white shadow-sm border-b relative z-10">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex justify-between items-center h-16">
-            <h1 className="text-2xl font-bold text-blue-600">💰 Expense Tracker</h1>
-
-            <nav className="hidden md:flex gap-2">
-              {["day", "week", "month", "all"].map(period => (
+      <header className="bg-white border-b sticky top-16 z-20">
+        <div className="max-w-7xl mx-auto px-3">
+          {/* Mobile Filters */}
+          <div className="md:hidden overflow-x-auto">
+            <div className="flex gap-2 py-3 w-max">
+              {["day", "week", "month", "all"].map((period) => (
                 <button
                   key={period}
                   onClick={() =>
@@ -185,19 +184,42 @@ function Home() {
                       ? fetchExpenses()
                       : filterExpenses({ period })
                   }
-                  className={`px-3 py-2 rounded-lg ${
-                    activeFilter === period
-                      ? "bg-blue-100 text-blue-700"
-                      : "text-slate-600 hover:bg-slate-100"
-                  }`}
+                  className={`px-4 py-2 rounded-full text-sm whitespace-nowrap ${activeFilter === period
+                      ? "bg-blue-600 text-white"
+                      : "bg-slate-100 text-slate-700"
+                    }`}
                 >
-                  {period.toUpperCase()}
+                  {period === "day" && "📅 Today"}
+                  {period === "week" && "📆 Week"}
+                  {period === "month" && "🗓️ Month"}
+                  {period === "all" && "🔄 All"}
                 </button>
               ))}
-            </nav>
+            </div>
+          </div>
+
+          {/* Desktop Filters */}
+          <div className="hidden md:flex gap-2 py-3">
+            {["day", "week", "month", "all"].map((period) => (
+              <button
+                key={period}
+                onClick={() =>
+                  period === "all"
+                    ? fetchExpenses()
+                    : filterExpenses({ period })
+                }
+                className={`px-4 py-2 rounded-lg ${activeFilter === period
+                    ? "bg-blue-100 text-blue-700"
+                    : "text-slate-600 hover:bg-slate-100"
+                  }`}
+              >
+                {period.toUpperCase()}
+              </button>
+            ))}
           </div>
         </div>
       </header>
+
 
       <main className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6">
         {/* Summary Cards */}
