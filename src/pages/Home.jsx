@@ -16,6 +16,16 @@ function Home() {
     date: new Date().toISOString().split("T")[0],
   });
 
+  // ✅ Handle input change (MISSING FUNCTION)
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+
   const [expenses, setExpenses] = useState([]);
   const [summary, setSummary] = useState({
     totalSpent: 0,
@@ -215,8 +225,8 @@ function Home() {
                   key={period}
                   onClick={() => period === "all" ? fetchExpenses() : filterExpenses({ period })}
                   className={`px-3 py-2 rounded-lg transition-all duration-200 text-sm lg:text-base ${activeFilter === period
-                      ? "bg-blue-100 text-blue-700 border border-blue-200"
-                      : "text-slate-600 hover:bg-slate-100"
+                    ? "bg-blue-100 text-blue-700 border border-blue-200"
+                    : "text-slate-600 hover:bg-slate-100"
                     }`}
                 >
                   {period === "day" && "📅 Today"}
@@ -248,8 +258,8 @@ function Home() {
                       setMobileMenuOpen(false);
                     }}
                     className={`px-3 py-2 rounded-lg transition-all duration-200 text-sm ${activeFilter === period
-                        ? "bg-blue-100 text-blue-700 border border-blue-200"
-                        : "text-slate-600 hover:bg-slate-100 border border-transparent"
+                      ? "bg-blue-100 text-blue-700 border border-blue-200"
+                      : "text-slate-600 hover:bg-slate-100 border border-transparent"
                       }`}
                   >
                     {period === "day" && "📅 Today"}
@@ -288,8 +298,8 @@ function Home() {
           </div>
 
           <div className={`rounded-xl sm:rounded-2xl p-4 sm:p-6 text-white shadow-lg ${summary.balance >= 0
-              ? "bg-gradient-to-br from-blue-500 to-cyan-600"
-              : "bg-gradient-to-br from-orange-500 to-red-600"
+            ? "bg-gradient-to-br from-blue-500 to-cyan-600"
+            : "bg-gradient-to-br from-orange-500 to-red-600"
             }`}>
             <div className="flex items-center justify-between">
               <div>
