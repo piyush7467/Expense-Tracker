@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 function Home() {
   const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     amount: "",
     category: "",
@@ -14,16 +15,20 @@ function Home() {
     group: "Personal",
     date: new Date().toISOString().split("T")[0],
   });
+
   const [expenses, setExpenses] = useState([]);
-  const [summary, setSummary] = useState({ totalSpent: 0, totalReceived: 0, balance: 0 });
+  const [summary, setSummary] = useState({
+    totalSpent: 0,
+    totalReceived: 0,
+    balance: 0,
+  });
+
   const [loading, setLoading] = useState(false);
   const [activeFilter, setActiveFilter] = useState("all");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
-  const token = localStorage.getItem("token");
-
-  // Check mobile screen on mount and resize
+  // ✅ Mobile check
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
@@ -31,7 +36,7 @@ function Home() {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // Categories with better organization
+  // ✅ Categories
   const categories = [
     { value: "food", label: "🍔 Food & Dining", color: "bg-orange-500", icon: "🍔" },
     { value: "transport", label: "🚗 Transport", color: "bg-blue-500", icon: "🚗" },
@@ -42,105 +47,116 @@ function Home() {
     { value: "other", label: "📌 Other", color: "bg-gray-500", icon: "📌" },
   ];
 
-  // Redirect if not authenticated
+  // ✅ Fetch expenses on mount
   useEffect(() => {
-    if (!token) {
-      toast.warning("Please login to continue");
-      navigate("/login");
-    } else {
-      fetchExpenses();
-    }
-  }, [token, navigate]);
+    fetchExpenses();
+  }, []);
 
-  // Fetch all expenses
+  // ✅ Fetch expenses (COOKIE-BASED)
   const fetchExpenses = async () => {
     try {
       setLoading(true);
       const res = await axios.get(
         "https://vercel-backend-one-sepia.vercel.app/api/expense/view",
-        { headers: { Authorization: `Bearer ${token}` } }
+        { withCredentials: true }
       );
       const data = res.data.data || [];
       setExpenses(data);
       calculateSummary(data);
     } catch (err) {
-      toast.error("Failed to fetch expenses");
-      console.error(err);
+      if (err.response?.status === 401) {
+        toast.warning("Session expired. Please login again.");
+        navigate("/login");
+      } else {
+        toast.error("Failed to fetch expenses");
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  // Calculate summary
+  // ✅ Summary calculation
   const calculateSummary = (data) => {
-    const totalSpent = data.filter(e => e.type === "spent").reduce((sum, e) => sum + Number(e.amount), 0);
-    const totalReceived = data.filter(e => e.type === "received").reduce((sum, e) => sum + Number(e.amount), 0);
-    setSummary({ totalSpent, totalReceived, balance: totalReceived - totalSpent });
+    const totalSpent = data
+      .filter((e) => e.type === "spent")
+      .reduce((sum, e) => sum + Number(e.amount), 0);
+
+    const totalReceived = data
+      .filter((e) => e.type === "received")
+      .reduce((sum, e) => sum + Number(e.amount), 0);
+
+    setSummary({
+      totalSpent,
+      totalReceived,
+      balance: totalReceived - totalSpent,
+    });
   };
 
-  // Add expense
+  // ✅ Add expense
   const addExpense = async (e) => {
     e.preventDefault();
+
     if (!formData.amount || !formData.category || !formData.date) {
       toast.warning("Please fill all required fields");
       return;
     }
 
     try {
-      const res = await axios.post(
+      await axios.post(
         "https://vercel-backend-one-sepia.vercel.app/api/expense/insert",
         formData,
-        { headers: { Authorization: `Bearer ${token}` } }
+        { withCredentials: true }
       );
-      if (res.status === 200) {
-        toast.success("Transaction added successfully");
-        setFormData({
-          amount: "",
-          category: "",
-          description: "",
-          type: "spent",
-          group: "Personal",
-          date: new Date().toISOString().split("T")[0],
-        });
-        fetchExpenses();
-      }
+
+      toast.success("Transaction added successfully");
+
+      setFormData({
+        amount: "",
+        category: "",
+        description: "",
+        type: "spent",
+        group: "Personal",
+        date: new Date().toISOString().split("T")[0],
+      });
+
+      fetchExpenses();
     } catch (err) {
-      toast.error("Failed to add transaction");
-      console.error(err);
+      if (err.response?.status === 401) {
+        toast.warning("Please login again");
+        navigate("/login");
+      } else {
+        toast.error("Failed to add transaction");
+      }
     }
   };
 
-  // Handle input change
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  // Delete expense
+  // ✅ Delete expense
   const deleteExpense = async (id) => {
     if (!window.confirm("Are you sure you want to delete this transaction?")) return;
+
     try {
       await axios.delete(
         `https://vercel-backend-one-sepia.vercel.app/api/expense/delete/${id}`,
-        { headers: { Authorization: `Bearer ${token}` } }
+        { withCredentials: true }
       );
-      toast.success("Transaction deleted successfully");
+      toast.success("Transaction deleted");
       fetchExpenses();
     } catch (err) {
       toast.error("Failed to delete transaction");
-      console.error(err);
     }
   };
 
-  // Filter expenses
+  // ✅ Filter expenses
   const filterExpenses = async (params = {}) => {
     try {
       setLoading(true);
       const query = new URLSearchParams(params).toString();
+
       const res = await axios.get(
         `https://vercel-backend-one-sepia.vercel.app/api/expense/filter?${query}`,
-        { headers: { Authorization: `Bearer ${token}` } }
+        { withCredentials: true }
       );
+
       const data = res.data.data || [];
       setExpenses(data);
       calculateSummary(data);
@@ -152,20 +168,22 @@ function Home() {
     }
   };
 
-  // Filtered expenses for display
+  // ✅ Sorted expenses
   const filteredExpenses = useMemo(() => {
-    return [...expenses].sort((a, b) => new Date(b.date) - new Date(a.date));
+    return [...expenses].sort(
+      (a, b) => new Date(b.date) - new Date(a.date)
+    );
   }, [expenses]);
 
-  // Get category info
-  const getCategoryInfo = (category) => {
-    const found = categories.find(cat => cat.value === category);
-    return found || { color: "bg-gray-500", icon: "📌" };
-  };
+  const getCategoryInfo = (category) =>
+    categories.find((c) => c.value === category) || {
+      color: "bg-gray-500",
+      icon: "📌",
+    };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 pb-8">
-      <ToastContainer 
+      <ToastContainer
         position={isMobile ? "top-center" : "top-right"}
         autoClose={3000}
         hideProgressBar={false}
@@ -179,7 +197,7 @@ function Home() {
         toastClassName="rounded-lg shadow-md"
         bodyClassName="text-sm font-medium"
       />
-      
+
       {/* Header */}
       <header className="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
@@ -189,18 +207,17 @@ function Home() {
                 💰 Expense Tracker
               </h1>
             </div>
-            
+
             {/* Desktop Navigation */}
             <nav className="hidden md:flex space-x-2 lg:space-x-4">
               {["day", "week", "month", "all"].map((period) => (
-                <button 
+                <button
                   key={period}
                   onClick={() => period === "all" ? fetchExpenses() : filterExpenses({ period })}
-                  className={`px-3 py-2 rounded-lg transition-all duration-200 text-sm lg:text-base ${
-                    activeFilter === period 
-                      ? "bg-blue-100 text-blue-700 border border-blue-200" 
+                  className={`px-3 py-2 rounded-lg transition-all duration-200 text-sm lg:text-base ${activeFilter === period
+                      ? "bg-blue-100 text-blue-700 border border-blue-200"
                       : "text-slate-600 hover:bg-slate-100"
-                  }`}
+                    }`}
                 >
                   {period === "day" && "📅 Today"}
                   {period === "week" && "📆 Week"}
@@ -211,7 +228,7 @@ function Home() {
             </nav>
 
             {/* Mobile menu button */}
-            <button 
+            <button
               className="md:hidden p-2 rounded-lg hover:bg-slate-100 transition-colors"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
@@ -224,17 +241,16 @@ function Home() {
             <div className="md:hidden py-3 border-t border-slate-200 bg-white">
               <div className="grid grid-cols-2 gap-2">
                 {["day", "week", "month", "all"].map((period) => (
-                  <button 
+                  <button
                     key={period}
                     onClick={() => {
                       period === "all" ? fetchExpenses() : filterExpenses({ period });
                       setMobileMenuOpen(false);
                     }}
-                    className={`px-3 py-2 rounded-lg transition-all duration-200 text-sm ${
-                      activeFilter === period 
-                        ? "bg-blue-100 text-blue-700 border border-blue-200" 
+                    className={`px-3 py-2 rounded-lg transition-all duration-200 text-sm ${activeFilter === period
+                        ? "bg-blue-100 text-blue-700 border border-blue-200"
                         : "text-slate-600 hover:bg-slate-100 border border-transparent"
-                    }`}
+                      }`}
                   >
                     {period === "day" && "📅 Today"}
                     {period === "week" && "📆 Week"}
@@ -260,7 +276,7 @@ function Home() {
               <div className="text-2xl sm:text-3xl">💸</div>
             </div>
           </div>
-          
+
           <div className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl sm:rounded-2xl p-4 sm:p-6 text-white shadow-lg">
             <div className="flex items-center justify-between">
               <div>
@@ -270,12 +286,11 @@ function Home() {
               <div className="text-2xl sm:text-3xl">💰</div>
             </div>
           </div>
-          
-          <div className={`rounded-xl sm:rounded-2xl p-4 sm:p-6 text-white shadow-lg ${
-            summary.balance >= 0 
-              ? "bg-gradient-to-br from-blue-500 to-cyan-600" 
+
+          <div className={`rounded-xl sm:rounded-2xl p-4 sm:p-6 text-white shadow-lg ${summary.balance >= 0
+              ? "bg-gradient-to-br from-blue-500 to-cyan-600"
               : "bg-gradient-to-br from-orange-500 to-red-600"
-          }`}>
+            }`}>
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-blue-100 text-xs sm:text-sm font-medium">Balance</p>
@@ -294,7 +309,7 @@ function Home() {
               <span className="w-7 h-7 sm:w-8 sm:h-8 bg-blue-500 rounded-lg flex items-center justify-center text-white mr-2 sm:mr-3 text-sm sm:text-base">+</span>
               Add New Transaction
             </h2>
-            
+
             <form onSubmit={addExpense} className="space-y-3 sm:space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
@@ -309,7 +324,7 @@ function Home() {
                     required
                   />
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1 sm:mb-2">Category</label>
                   <select
@@ -354,7 +369,7 @@ function Home() {
                     <option value="received">💰 Received</option>
                   </select>
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1 sm:mb-2">Group</label>
                   <input
@@ -443,7 +458,7 @@ function Home() {
                             🗑️
                           </button>
                         </div>
-                        
+
                         <div className="flex justify-between items-center text-xs text-slate-500">
                           <div className="flex flex-col space-y-1">
                             {exp.description && (
@@ -476,11 +491,10 @@ function Home() {
                             </div>
                           </div>
                         </div>
-                        
+
                         <div className="flex items-center space-x-2 sm:space-x-3">
-                          <span className={`text-base sm:text-lg font-bold ${
-                            exp.type === "spent" ? "text-red-600" : "text-green-600"
-                          }`}>
+                          <span className={`text-base sm:text-lg font-bold ${exp.type === "spent" ? "text-red-600" : "text-green-600"
+                            }`}>
                             {exp.type === "spent" ? "-" : "+"}₹{exp.amount}
                           </span>
                           <button

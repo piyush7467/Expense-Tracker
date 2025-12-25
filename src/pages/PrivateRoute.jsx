@@ -1,37 +1,42 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
-import axios from "axios";
+import api from "../api/axios";
+
 
 const PrivateRoute = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(null); // null = loading
+  const [status, setStatus] = useState("loading");
 
   useEffect(() => {
-    const checkAuth = async () => {
+    let mounted = true;
+
+    const verifyUser = async () => {
       try {
-        await axios.get(
-          "https://vercel-backend-one-sepia.vercel.app/api/user/me",
-          { withCredentials: true }
-        );
-        setIsAuthenticated(true);
-      } catch (error) {
-        setIsAuthenticated(false);
+        await api.get("/api/user/me");
+        if (mounted) setStatus("authenticated");
+      } catch {
+        if (mounted) setStatus("unauthenticated");
       }
     };
 
-    checkAuth();
+    verifyUser();
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
-  // While checking auth, don't render anything
-  if (isAuthenticated === null) {
-    return null; // or loading spinner
+  if (status === "loading") {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-500 text-lg">Checking authentication...</p>
+      </div>
+    );
   }
 
-  // Not authenticated → redirect
-  if (!isAuthenticated) {
+  if (status === "unauthenticated") {
     return <Navigate to="/login" replace />;
   }
 
-  // Authenticated → allow access
   return children;
 };
 

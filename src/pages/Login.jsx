@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import api from "../api/axios";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -27,18 +28,29 @@ const Login = () => {
     }
 
     setIsLoading(true);
+
     try {
-      const res = await axios.post(
-        "https://vercel-backend-one-sepia.vercel.app/api/user/login",
-        {
-          email: formData.email.toLowerCase().trim(),
-          password: formData.password,
-        },
-        { withCredentials: true } // 🔐 REQUIRED FOR HTTPONLY COOKIE
-      );
+      // const res = await axios.post(
+      //   "https://vercel-backend-one-sepia.vercel.app/api/user/login",
+      //   {
+      //     email: formData.email.toLowerCase().trim(),
+      //     password: formData.password,
+      //   },
+      //   { withCredentials: true }
+      // );
+
+      const res= await api.post("/api/user/login", {
+        email: formData.email.toLowerCase().trim(),
+        password: formData.password,
+      });
 
       toast.success(res.data.message || "Login successful");
-      navigate("/"); // redirect after successful login
+
+      // ⏳ IMPORTANT: wait before redirect
+      setTimeout(() => {
+        navigate("/");
+      }, 300);
+
     } catch (err) {
       console.error(err);
       toast.error(err.response?.data?.message || "Login failed");
@@ -46,6 +58,7 @@ const Login = () => {
       setIsLoading(false);
     }
   };
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
