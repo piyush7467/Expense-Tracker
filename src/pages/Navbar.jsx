@@ -13,7 +13,7 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // Check auth status from backend
+  // 🔐 Check auth
   useEffect(() => {
     const checkAuth = async () => {
       try {
@@ -29,7 +29,7 @@ const Navbar = () => {
           setIsLoggedIn(false);
           setUser(null);
         }
-      } catch (err) {
+      } catch {
         setIsLoggedIn(false);
         setUser(null);
       } finally {
@@ -57,14 +57,14 @@ const Navbar = () => {
       setUser(null);
       toast.success("Logged out successfully");
       navigate("/login");
-    } catch (err) {
+    } catch {
       toast.error("Logout failed");
     }
   };
 
   const isActiveRoute = (path) => location.pathname === path;
 
-  if (loading) return null; // prevents flicker on refresh
+  if (loading) return null;
 
   return (
     <nav
@@ -86,7 +86,7 @@ const Navbar = () => {
             </span>
           </Link>
 
-          {/* Desktop */}
+          {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-4">
             {isLoggedIn ? (
               <>
@@ -106,7 +106,7 @@ const Navbar = () => {
                     <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center">
                       {user?.name?.charAt(0).toUpperCase()}
                     </div>
-                    <span>▼</span>
+                    <span className="text-xs">▼</span>
                   </button>
 
                   <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
@@ -142,8 +142,75 @@ const Navbar = () => {
               </>
             )}
           </div>
+
+          {/* Mobile Button */}
+          <button
+            className="md:hidden text-2xl"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? "✕" : "☰"}
+          </button>
         </div>
       </div>
+
+      {/* 📱 Mobile Menu */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden bg-white border-t shadow-lg">
+          <div className="px-4 py-4 space-y-3">
+            {isLoggedIn ? (
+              <>
+                <div className="flex items-center space-x-3 border-b pb-3">
+                  <div className="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center">
+                    {user?.name?.charAt(0).toUpperCase()}
+                  </div>
+                  <div>
+                    <p className="font-semibold">{user?.name}</p>
+                    <p className="text-xs text-gray-500 truncate">
+                      {user?.email}
+                    </p>
+                  </div>
+                </div>
+
+                <Link
+                  to="/"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={`block px-3 py-2 rounded-lg ${
+                    isActiveRoute("/")
+                      ? "bg-blue-100 text-blue-700"
+                      : "text-gray-700 hover:bg-gray-100"
+                  }`}
+                >
+                  Dashboard
+                </Link>
+
+                <button
+                  onClick={handleLogout}
+                  className="w-full text-left px-3 py-2 rounded-lg text-red-600 hover:bg-red-50"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg"
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/signup"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="block px-3 py-2 bg-green-600 text-white rounded-lg text-center"
+                >
+                  Sign Up
+                </Link>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </nav>
   );
 };

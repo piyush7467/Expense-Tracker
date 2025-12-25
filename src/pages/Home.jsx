@@ -16,15 +16,11 @@ function Home() {
     date: new Date().toISOString().split("T")[0],
   });
 
-  // ✅ Handle input change (MISSING FUNCTION)
+  // ✅ Handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
-
 
   const [expenses, setExpenses] = useState([]);
   const [summary, setSummary] = useState({
@@ -46,7 +42,6 @@ function Home() {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // ✅ Categories
   const categories = [
     { value: "food", label: "🍔 Food & Dining", color: "bg-orange-500", icon: "🍔" },
     { value: "transport", label: "🚗 Transport", color: "bg-blue-500", icon: "🚗" },
@@ -57,12 +52,10 @@ function Home() {
     { value: "other", label: "📌 Other", color: "bg-gray-500", icon: "📌" },
   ];
 
-  // ✅ Fetch expenses on mount
   useEffect(() => {
     fetchExpenses();
   }, []);
 
-  // ✅ Fetch expenses (COOKIE-BASED)
   const fetchExpenses = async () => {
     try {
       setLoading(true);
@@ -85,14 +78,11 @@ function Home() {
     }
   };
 
-  // ✅ Summary calculation
   const calculateSummary = (data) => {
-    const totalSpent = data
-      .filter((e) => e.type === "spent")
+    const totalSpent = data.filter(e => e.type === "spent")
       .reduce((sum, e) => sum + Number(e.amount), 0);
 
-    const totalReceived = data
-      .filter((e) => e.type === "received")
+    const totalReceived = data.filter(e => e.type === "received")
       .reduce((sum, e) => sum + Number(e.amount), 0);
 
     setSummary({
@@ -102,7 +92,6 @@ function Home() {
     });
   };
 
-  // ✅ Add expense
   const addExpense = async (e) => {
     e.preventDefault();
 
@@ -130,19 +119,13 @@ function Home() {
       });
 
       fetchExpenses();
-    } catch (err) {
-      if (err.response?.status === 401) {
-        toast.warning("Please login again");
-        navigate("/login");
-      } else {
-        toast.error("Failed to add transaction");
-      }
+    } catch {
+      toast.error("Failed to add transaction");
     }
   };
 
-  // ✅ Delete expense
   const deleteExpense = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this transaction?")) return;
+    if (!window.confirm("Delete this transaction?")) return;
 
     try {
       await axios.delete(
@@ -151,17 +134,15 @@ function Home() {
       );
       toast.success("Transaction deleted");
       fetchExpenses();
-    } catch (err) {
+    } catch {
       toast.error("Failed to delete transaction");
     }
   };
 
-  // ✅ Filter expenses
   const filterExpenses = async (params = {}) => {
     try {
       setLoading(true);
       const query = new URLSearchParams(params).toString();
-
       const res = await axios.get(
         `https://vercel-backend-one-sepia.vercel.app/api/expense/filter?${query}`,
         { withCredentials: true }
@@ -171,106 +152,50 @@ function Home() {
       setExpenses(data);
       calculateSummary(data);
       setActiveFilter(params.period || "all");
-    } catch (err) {
+    } catch {
       toast.error("Failed to apply filter");
     } finally {
       setLoading(false);
     }
   };
 
-  // ✅ Sorted expenses
   const filteredExpenses = useMemo(() => {
-    return [...expenses].sort(
-      (a, b) => new Date(b.date) - new Date(a.date)
-    );
+    return [...expenses].sort((a, b) => new Date(b.date) - new Date(a.date));
   }, [expenses]);
 
   const getCategoryInfo = (category) =>
-    categories.find((c) => c.value === category) || {
-      color: "bg-gray-500",
-      icon: "📌",
-    };
+    categories.find(c => c.value === category) || { color: "bg-gray-500", icon: "📌" };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 pb-8">
-      <ToastContainer
-        position={isMobile ? "top-center" : "top-right"}
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={true}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-        toastClassName="rounded-lg shadow-md"
-        bodyClassName="text-sm font-medium"
-      />
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 pt-16 pb-8">
+      <ToastContainer position={isMobile ? "top-center" : "top-right"} autoClose={3000} />
 
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-slate-200 sticky top-20 z-50">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
-          <div className="flex justify-between items-center h-14 sm:h-16">
-            <div className="flex items-center">
-              <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                💰 Expense Tracker
-              </h1>
-            </div>
+      <header className="bg-white shadow-sm border-b relative z-10">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex justify-between items-center h-16">
+            <h1 className="text-2xl font-bold text-blue-600">💰 Expense Tracker</h1>
 
-            {/* Desktop Navigation */}
-            <nav className="hidden md:flex space-x-2 lg:space-x-4">
-              {["day", "week", "month", "all"].map((period) => (
+            <nav className="hidden md:flex gap-2">
+              {["day", "week", "month", "all"].map(period => (
                 <button
                   key={period}
-                  onClick={() => period === "all" ? fetchExpenses() : filterExpenses({ period })}
-                  className={`px-3 py-2 rounded-lg transition-all duration-200 text-sm lg:text-base ${activeFilter === period
-                    ? "bg-blue-100 text-blue-700 border border-blue-200"
-                    : "text-slate-600 hover:bg-slate-100"
-                    }`}
+                  onClick={() =>
+                    period === "all"
+                      ? fetchExpenses()
+                      : filterExpenses({ period })
+                  }
+                  className={`px-3 py-2 rounded-lg ${
+                    activeFilter === period
+                      ? "bg-blue-100 text-blue-700"
+                      : "text-slate-600 hover:bg-slate-100"
+                  }`}
                 >
-                  {period === "day" && "📅 Today"}
-                  {period === "week" && "📆 Week"}
-                  {period === "month" && "🗓️ Month"}
-                  {period === "all" && "🔄 All"}
+                  {period.toUpperCase()}
                 </button>
               ))}
             </nav>
-
-            {/* Mobile menu button */}
-            <button
-              className="md:hidden p-2 rounded-lg hover:bg-slate-100 transition-colors"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
-              <span className="text-xl">{mobileMenuOpen ? "✕" : "☰"}</span>
-            </button>
           </div>
-
-          {/* Mobile Navigation */}
-          {mobileMenuOpen && (
-            <div className="md:hidden py-3 border-t border-slate-200 bg-white">
-              <div className="grid grid-cols-2 gap-2">
-                {["day", "week", "month", "all"].map((period) => (
-                  <button
-                    key={period}
-                    onClick={() => {
-                      period === "all" ? fetchExpenses() : filterExpenses({ period });
-                      setMobileMenuOpen(false);
-                    }}
-                    className={`px-3 py-2 rounded-lg transition-all duration-200 text-sm ${activeFilter === period
-                      ? "bg-blue-100 text-blue-700 border border-blue-200"
-                      : "text-slate-600 hover:bg-slate-100 border border-transparent"
-                      }`}
-                  >
-                    {period === "day" && "📅 Today"}
-                    {period === "week" && "📆 Week"}
-                    {period === "month" && "🗓️ Month"}
-                    {period === "all" && "🔄 All"}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       </header>
 
