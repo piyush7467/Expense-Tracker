@@ -1,10 +1,10 @@
 import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Navbar from "./pages/Navbar";
+import Navbar from "./component/Navbar";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import PrivateRoute from "./pages/PrivateRoute";
+import PrivateRoute from "./component/PrivateRoute";
 
 
 const router = createBrowserRouter([

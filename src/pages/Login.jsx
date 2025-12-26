@@ -4,9 +4,13 @@ import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import api from "../api/axios";
+import { useDispatch } from "react-redux";
+import { setUser } from "../redux/authSlice";
 
 const Login = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -39,17 +43,24 @@ const Login = () => {
       //   { withCredentials: true }
       // );
 
-      const res= await api.post("/api/user/login", {
+      const res = await api.post("/api/user/login", {
         email: formData.email.toLowerCase().trim(),
         password: formData.password,
       });
 
-      toast.success(res.data.message || "Login successful");
+
+      if (res.data.success) {
+        dispatch(setUser(res.data.user));
+        toast.success(res.data.message || "Login successful");
+        navigate("/");
+      }
+
+      // toast.success(res.data.message || "Login successful");
 
       // ⏳ IMPORTANT: wait before redirect
-      setTimeout(() => {
-        navigate("/");
-      }, 300);
+      // setTimeout(() => {
+      //   navigate("/");
+      // }, 300);
 
     } catch (err) {
       console.error(err);

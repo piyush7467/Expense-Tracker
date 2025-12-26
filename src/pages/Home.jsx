@@ -1,11 +1,14 @@
 import axios from "axios";
 import { useState, useEffect, useMemo } from "react";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { store } from "../redux/store";
 
 function Home() {
   const navigate = useNavigate();
+  const {user}=useSelector(store=>store.auth);
 
   const [formData, setFormData] = useState({
     amount: "",
@@ -264,8 +267,9 @@ function Home() {
           <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-slate-200 p-4 sm:p-6">
             <h2 className="text-xl sm:text-2xl font-bold text-slate-800 mb-4 sm:mb-6 flex items-center">
               <span className="w-7 h-7 sm:w-8 sm:h-8 bg-blue-500 rounded-lg flex items-center justify-center text-white mr-2 sm:mr-3 text-sm sm:text-base">+</span>
-              Add New Transaction
+              Add New Transaction {user?.name }
             </h2>
+
 
             <form onSubmit={addExpense} className="space-y-3 sm:space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
