@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useSelector, useDispatch } from "react-redux";
 import { toggleTheme } from "../redux/themeSlice";
 import { logout as logoutAction } from "../redux/authSlice";
-import api from "../api/axios";
 import { FaMoon, FaSun } from "react-icons/fa";
+import api from "../api/axios";
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -18,7 +18,7 @@ const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
-  // Scroll effect
+  // Scroll shadow effect
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll);
@@ -73,16 +73,16 @@ const Navbar = () => {
                   Dashboard
                 </Link>
 
-                {/* Theme Toggle */}
+                {/* 🌙 / ☀️ Theme Toggle */}
                 <button
                   onClick={() => dispatch(toggleTheme())}
                   className="p-3 rounded-xl hover:scale-110 transition-all"
                   aria-label="Toggle theme"
                 >
                   {theme === "light" ? (
-                    <FaMoon className="text-amber-600" />
+                    <FaMoon className="text-amber-600 text-lg" />
                   ) : (
-                    <FaSun className="text-yellow-400" />
+                    <FaSun className="text-yellow-400 text-lg" />
                   )}
                 </button>
 
@@ -129,7 +129,7 @@ const Navbar = () => {
             )}
           </div>
 
-          {/* Mobile Toggle */}
+          {/* Mobile Menu Toggle */}
           <button
             className="md:hidden text-2xl"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -165,14 +165,26 @@ const Navbar = () => {
                   Dashboard
                 </Link>
 
+                {/* 🌙 / ☀️ Theme Toggle (ICON ONLY, CLEAN) */}
                 <button
                   onClick={() => {
                     dispatch(toggleTheme());
                     setIsMobileMenuOpen(false);
                   }}
-                  className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100"
+                  className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 transition-all"
+                  aria-label="Toggle theme"
                 >
-                  Toggle Theme
+                  {theme === "light" ? (
+                    <>
+                      <FaMoon className="text-amber-600 text-lg" />
+                      <span className="text-sm">Dark Mode</span>
+                    </>
+                  ) : (
+                    <>
+                      <FaSun className="text-yellow-400 text-lg" />
+                      <span className="text-sm">Light Mode</span>
+                    </>
+                  )}
                 </button>
 
                 <button
