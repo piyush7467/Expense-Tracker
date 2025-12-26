@@ -8,7 +8,7 @@ import { store } from "../redux/store";
 
 function Home() {
   const navigate = useNavigate();
-  const {user}=useSelector(store=>store.auth);
+  const { user } = useSelector(store => store.auth);
 
   const [formData, setFormData] = useState({
     amount: "",
@@ -34,8 +34,13 @@ function Home() {
 
   const [loading, setLoading] = useState(false);
   const [activeFilter, setActiveFilter] = useState("all");
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  
+  // ✅ Add theme state
+  const [darkMode, setDarkMode] = useState(() => 
+    localStorage.getItem("theme") === "dark" ||
+    (!localStorage.getItem("theme") && window.matchMedia("(prefers-color-scheme: dark)").matches)
+  );
 
   // ✅ Mobile check
   useEffect(() => {
@@ -44,6 +49,17 @@ function Home() {
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
+
+  // ✅ Apply dark mode class
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [darkMode]);
 
   const categories = [
     { value: "food", label: "🍔 Food & Dining", color: "bg-orange-500", icon: "🍔" },
@@ -170,11 +186,24 @@ function Home() {
     categories.find(c => c.value === category) || { color: "bg-gray-500", icon: "📌" };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 pt-16 pb-8">
-      <ToastContainer position={isMobile ? "top-center" : "top-right"} autoClose={3000} />
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800 pt-16 pb-8">
+      <ToastContainer 
+        position={isMobile ? "top-center" : "top-right"} 
+        autoClose={3000}
+        theme={darkMode ? "dark" : "light"}
+      />
+
+      {/* Theme Toggle Button */}
+      <button
+        onClick={() => setDarkMode(!darkMode)}
+        className="fixed top-20 right-4 z-30 p-2 bg-white dark:bg-gray-800 rounded-full shadow-lg hover:shadow-xl transition-shadow"
+        title="Toggle theme"
+      >
+        {darkMode ? "☀️" : "🌙"}
+      </button>
 
       {/* Header */}
-      <header className="bg-white border-b sticky top-16 z-20">
+      <header className="bg-white dark:bg-gray-800 border-b dark:border-gray-700 sticky top-16 z-20">
         <div className="max-w-7xl mx-auto px-3">
           {/* Mobile Filters */}
           <div className="md:hidden overflow-x-auto">
@@ -187,10 +216,11 @@ function Home() {
                       ? fetchExpenses()
                       : filterExpenses({ period })
                   }
-                  className={`px-4 py-2 rounded-full text-sm whitespace-nowrap ${activeFilter === period
+                  className={`px-4 py-2 rounded-full text-sm whitespace-nowrap ${
+                    activeFilter === period
                       ? "bg-blue-600 text-white"
-                      : "bg-slate-100 text-slate-700"
-                    }`}
+                      : "bg-slate-100 dark:bg-gray-700 text-slate-700 dark:text-gray-300"
+                  }`}
                 >
                   {period === "day" && "📅 Today"}
                   {period === "week" && "📆 Week"}
@@ -211,10 +241,11 @@ function Home() {
                     ? fetchExpenses()
                     : filterExpenses({ period })
                 }
-                className={`px-4 py-2 rounded-lg ${activeFilter === period
-                    ? "bg-blue-100 text-blue-700"
-                    : "text-slate-600 hover:bg-slate-100"
-                  }`}
+                className={`px-4 py-2 rounded-lg ${
+                  activeFilter === period
+                    ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300"
+                    : "text-slate-600 dark:text-gray-400 hover:bg-slate-100 dark:hover:bg-gray-700"
+                }`}
               >
                 {period.toUpperCase()}
               </button>
@@ -222,7 +253,6 @@ function Home() {
           </div>
         </div>
       </header>
-
 
       <main className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6">
         {/* Summary Cards */}
@@ -247,10 +277,11 @@ function Home() {
             </div>
           </div>
 
-          <div className={`rounded-xl sm:rounded-2xl p-4 sm:p-6 text-white shadow-lg ${summary.balance >= 0
-            ? "bg-gradient-to-br from-blue-500 to-cyan-600"
-            : "bg-gradient-to-br from-orange-500 to-red-600"
-            }`}>
+          <div className={`rounded-xl sm:rounded-2xl p-4 sm:p-6 text-white shadow-lg ${
+            summary.balance >= 0
+              ? "bg-gradient-to-br from-blue-500 to-cyan-600"
+              : "bg-gradient-to-br from-orange-500 to-red-600"
+          }`}>
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-blue-100 text-xs sm:text-sm font-medium">Balance</p>
@@ -264,35 +295,34 @@ function Home() {
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
           {/* Add Expense Form */}
-          <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-slate-200 p-4 sm:p-6">
-            <h2 className="text-xl sm:text-2xl font-bold text-slate-800 mb-4 sm:mb-6 flex items-center">
+          <div className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl shadow-lg border border-slate-200 dark:border-gray-700 p-4 sm:p-6">
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-800 dark:text-white mb-4 sm:mb-6 flex items-center">
               <span className="w-7 h-7 sm:w-8 sm:h-8 bg-blue-500 rounded-lg flex items-center justify-center text-white mr-2 sm:mr-3 text-sm sm:text-base">+</span>
-              Add New Transaction {user?.name }
+              Add New Transaction {user?.name}
             </h2>
-
 
             <form onSubmit={addExpense} className="space-y-3 sm:space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1 sm:mb-2">Amount ₹</label>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-gray-300 mb-1 sm:mb-2">Amount ₹</label>
                   <input
                     type="number"
                     name="amount"
                     placeholder="0.00"
                     value={formData.amount}
                     onChange={handleChange}
-                    className="w-full p-2 sm:p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-sm sm:text-base"
+                    className="w-full p-2 sm:p-3 border border-slate-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-all duration-200 text-sm sm:text-base"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1 sm:mb-2">Category</label>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-gray-300 mb-1 sm:mb-2">Category</label>
                   <select
                     name="category"
                     value={formData.category}
                     onChange={handleChange}
-                    className="w-full p-2 sm:p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white text-sm sm:text-base"
+                    className="w-full p-2 sm:p-3 border border-slate-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-all duration-200 text-sm sm:text-base"
                     required
                   >
                     <option value="">Select a category</option>
@@ -306,25 +336,25 @@ function Home() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1 sm:mb-2">Description</label>
+                <label className="block text-sm font-medium text-slate-700 dark:text-gray-300 mb-1 sm:mb-2">Description</label>
                 <input
                   type="text"
                   name="description"
                   placeholder="Optional description..."
                   value={formData.description}
                   onChange={handleChange}
-                  className="w-full p-2 sm:p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-sm sm:text-base"
+                  className="w-full p-2 sm:p-3 border border-slate-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-all duration-200 text-sm sm:text-base"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1 sm:mb-2">Type</label>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-gray-300 mb-1 sm:mb-2">Type</label>
                   <select
                     name="type"
                     value={formData.type}
                     onChange={handleChange}
-                    className="w-full p-2 sm:p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white text-sm sm:text-base"
+                    className="w-full p-2 sm:p-3 border border-slate-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-all duration-200 text-sm sm:text-base"
                   >
                     <option value="spent">💸 Spent</option>
                     <option value="received">💰 Received</option>
@@ -332,26 +362,26 @@ function Home() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1 sm:mb-2">Group</label>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-gray-300 mb-1 sm:mb-2">Group</label>
                   <input
                     type="text"
                     name="group"
                     placeholder="Personal, Family, etc."
                     value={formData.group}
                     onChange={handleChange}
-                    className="w-full p-2 sm:p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-sm sm:text-base"
+                    className="w-full p-2 sm:p-3 border border-slate-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-all duration-200 text-sm sm:text-base"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1 sm:mb-2">Date</label>
+                <label className="block text-sm font-medium text-slate-700 dark:text-gray-300 mb-1 sm:mb-2">Date</label>
                 <input
                   type="date"
                   name="date"
                   value={formData.date}
                   onChange={handleChange}
-                  className="w-full p-2 sm:p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-sm sm:text-base"
+                  className="w-full p-2 sm:p-3 border border-slate-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-all duration-200 text-sm sm:text-base"
                   required
                 />
               </div>
@@ -366,13 +396,13 @@ function Home() {
           </div>
 
           {/* Expense List */}
-          <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-slate-200 p-4 sm:p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl shadow-lg border border-slate-200 dark:border-gray-700 p-4 sm:p-6">
             <div className="flex justify-between items-center mb-4 sm:mb-6">
-              <h2 className="text-xl sm:text-2xl font-bold text-slate-800 flex items-center">
+              <h2 className="text-xl sm:text-2xl font-bold text-slate-800 dark:text-white flex items-center">
                 <span className="w-7 h-7 sm:w-8 sm:h-8 bg-green-500 rounded-lg flex items-center justify-center text-white mr-2 sm:mr-3 text-sm sm:text-base">📋</span>
                 Transaction History
               </h2>
-              <span className="bg-slate-100 text-slate-600 px-2 py-1 rounded-full text-xs sm:text-sm font-medium">
+              <span className="bg-slate-100 dark:bg-gray-700 text-slate-600 dark:text-gray-300 px-2 py-1 rounded-full text-xs sm:text-sm font-medium">
                 {filteredExpenses.length} transactions
               </span>
             </div>
@@ -380,13 +410,13 @@ function Home() {
             {loading ? (
               <div className="flex flex-col items-center justify-center py-8 sm:py-12">
                 <div className="animate-spin rounded-full h-8 w-8 sm:h-12 sm:w-12 border-b-2 border-blue-500 mb-2 sm:mb-4"></div>
-                <p className="text-slate-500 text-sm sm:text-base">Loading transactions...</p>
+                <p className="text-slate-500 dark:text-gray-400 text-sm sm:text-base">Loading transactions...</p>
               </div>
             ) : filteredExpenses.length === 0 ? (
               <div className="text-center py-8 sm:py-12">
                 <div className="text-4xl sm:text-6xl mb-3 sm:mb-4">📊</div>
-                <p className="text-slate-500 text-base sm:text-lg">No transactions found</p>
-                <p className="text-slate-400 text-sm sm:text-base">Add your first transaction to get started!</p>
+                <p className="text-slate-500 dark:text-gray-400 text-base sm:text-lg">No transactions found</p>
+                <p className="text-slate-400 dark:text-gray-500 text-sm sm:text-base">Add your first transaction to get started!</p>
               </div>
             ) : (
               <div className="space-y-3 max-h-[500px] overflow-y-auto">
@@ -395,7 +425,7 @@ function Home() {
                   return (
                     <div
                       key={exp._id}
-                      className="bg-slate-50 rounded-lg sm:rounded-xl p-3 sm:p-4 border border-slate-200 hover:border-slate-300 transition-all duration-200 group"
+                      className="bg-slate-50 dark:bg-gray-700 rounded-lg sm:rounded-xl p-3 sm:p-4 border border-slate-200 dark:border-gray-600 hover:border-slate-300 dark:hover:border-gray-500 transition-all duration-200 group"
                     >
                       {/* Mobile Layout */}
                       <div className="block sm:hidden">
@@ -405,10 +435,12 @@ function Home() {
                               {categoryInfo.icon}
                             </div>
                             <div>
-                              <span className={`text-base font-bold ${exp.type === "spent" ? "text-red-600" : "text-green-600"}`}>
+                              <span className={`text-base font-bold ${
+                                exp.type === "spent" ? "text-red-600" : "text-green-600"
+                              }`}>
                                 {exp.type === "spent" ? "-" : "+"}₹{exp.amount}
                               </span>
-                              <p className="text-slate-600 text-xs capitalize">{exp.category}</p>
+                              <p className="text-slate-600 dark:text-gray-300 text-xs capitalize">{exp.category}</p>
                             </div>
                           </div>
                           <button
@@ -420,10 +452,10 @@ function Home() {
                           </button>
                         </div>
 
-                        <div className="flex justify-between items-center text-xs text-slate-500">
+                        <div className="flex justify-between items-center text-xs text-slate-500 dark:text-gray-400">
                           <div className="flex flex-col space-y-1">
                             {exp.description && (
-                              <span className="text-slate-600 truncate max-w-[120px]">📝 {exp.description}</span>
+                              <span className="text-slate-600 dark:text-gray-300 truncate max-w-[120px]">📝 {exp.description}</span>
                             )}
                             <span>👥 {exp.group}</span>
                           </div>
@@ -439,14 +471,14 @@ function Home() {
                           </div>
                           <div>
                             <div className="flex items-center space-x-2">
-                              <span className="font-semibold text-slate-800 capitalize text-sm sm:text-base">
+                              <span className="font-semibold text-slate-800 dark:text-white capitalize text-sm sm:text-base">
                                 {exp.category}
                               </span>
                               {exp.description && (
-                                <span className="text-slate-500 text-xs sm:text-sm">• {exp.description}</span>
+                                <span className="text-slate-500 dark:text-gray-400 text-xs sm:text-sm">• {exp.description}</span>
                               )}
                             </div>
-                            <div className="flex items-center space-x-3 sm:space-x-4 text-xs sm:text-sm text-slate-500 mt-1">
+                            <div className="flex items-center space-x-3 sm:space-x-4 text-xs sm:text-sm text-slate-500 dark:text-gray-400 mt-1">
                               <span>👥 {exp.group}</span>
                               <span>📅 {exp.date?.split("T")[0]}</span>
                             </div>
@@ -454,13 +486,14 @@ function Home() {
                         </div>
 
                         <div className="flex items-center space-x-2 sm:space-x-3">
-                          <span className={`text-base sm:text-lg font-bold ${exp.type === "spent" ? "text-red-600" : "text-green-600"
-                            }`}>
+                          <span className={`text-base sm:text-lg font-bold ${
+                            exp.type === "spent" ? "text-red-600" : "text-green-600"
+                          }`}>
                             {exp.type === "spent" ? "-" : "+"}₹{exp.amount}
                           </span>
                           <button
                             onClick={() => deleteExpense(exp._id)}
-                            className="opacity-0 group-hover:opacity-100 p-1 sm:p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200"
+                            className="opacity-0 group-hover:opacity-100 p-1 sm:p-2 text-red-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-gray-600 rounded-lg transition-all duration-200"
                             title="Delete"
                           >
                             🗑️
