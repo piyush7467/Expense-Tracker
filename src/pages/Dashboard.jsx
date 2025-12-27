@@ -1,3 +1,4 @@
+import { Card } from '@/components/ui/card';
 import { store } from '@/redux/store'
 import React from 'react'
 import { useSelector } from 'react-redux'
