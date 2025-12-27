@@ -72,31 +72,59 @@ function Home({ injectedMeta = {} }) {
     { value: "other", label: "📌 Other", color: "bg-gray-500", icon: "📌" },
   ];
 
-  useEffect(() => {
-    fetchExpenses();
-  }, []);
+  // useEffect(() => {
+  //   fetchExpenses();
+  // }, []);
 
   const fetchExpenses = async () => {
     try {
       setLoading(true);
+
+      const query = new URLSearchParams(injectedMeta).toString();
+      console.log("FETCHING WITH:", injectedMeta); // 🔍 DEBUG LINE
+
       const res = await axios.get(
-        "https://vercel-backend-one-sepia.vercel.app/api/expense/view",
+        `https://vercel-backend-one-sepia.vercel.app/api/expense/view?${query}`,
         { withCredentials: true }
       );
+
       const data = res.data.data || [];
       setExpenses(data);
       calculateSummary(data);
     } catch (err) {
-      if (err.response?.status === 401) {
-        toast.warning("Session expired. Please login again.");
-        navigate("/login");
-      } else {
-        toast.error("Failed to fetch expenses");
-      }
+      toast.error("Failed to fetch expenses");
     } finally {
       setLoading(false);
     }
   };
+
+
+  useEffect(() => {
+    fetchExpenses();
+  }, [JSON.stringify(injectedMeta)]);
+
+
+  // const fetchExpenses = async () => {
+  //   try {
+  //     setLoading(true);
+  //     const res = await axios.get(
+  //       "https://vercel-backend-one-sepia.vercel.app/api/expense/view",
+  //       { withCredentials: true }
+  //     );
+  //     const data = res.data.data || [];
+  //     setExpenses(data);
+  //     calculateSummary(data);
+  //   } catch (err) {
+  //     if (err.response?.status === 401) {
+  //       toast.warning("Session expired. Please login again.");
+  //       navigate("/login");
+  //     } else {
+  //       toast.error("Failed to fetch expenses");
+  //     }
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const calculateSummary = (data) => {
     const totalSpent = data.filter(e => e.type === "spent")
@@ -253,8 +281,8 @@ function Home({ injectedMeta = {} }) {
                       : filterExpenses({ period })
                   }
                   className={`px-4 py-2 rounded-full text-sm whitespace-nowrap ${activeFilter === period
-                      ? "bg-blue-600 text-white"
-                      : "bg-slate-100 dark:bg-gray-700 text-slate-700 dark:text-gray-300"
+                    ? "bg-blue-600 text-white"
+                    : "bg-slate-100 dark:bg-gray-700 text-slate-700 dark:text-gray-300"
                     }`}
                 >
                   {period === "day" && "📅 Today"}
@@ -277,8 +305,8 @@ function Home({ injectedMeta = {} }) {
                     : filterExpenses({ period })
                 }
                 className={`px-4 py-2 rounded-lg ${activeFilter === period
-                    ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300"
-                    : "text-slate-600 dark:text-gray-400 hover:bg-slate-100 dark:hover:bg-gray-700"
+                  ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300"
+                  : "text-slate-600 dark:text-gray-400 hover:bg-slate-100 dark:hover:bg-gray-700"
                   }`}
               >
                 {period.toUpperCase()}
@@ -312,8 +340,8 @@ function Home({ injectedMeta = {} }) {
           </div>
 
           <div className={`rounded-xl sm:rounded-2xl p-4 sm:p-6 text-white shadow-lg ${summary.balance >= 0
-              ? "bg-gradient-to-br from-blue-500 to-cyan-600"
-              : "bg-gradient-to-br from-orange-500 to-red-600"
+            ? "bg-gradient-to-br from-blue-500 to-cyan-600"
+            : "bg-gradient-to-br from-orange-500 to-red-600"
             }`}>
             <div className="flex items-center justify-between">
               <div>
