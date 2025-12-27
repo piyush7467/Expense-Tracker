@@ -6,7 +6,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { store } from "../redux/store";
 
-function Home() {
+function Home({ injectedMeta = {} }) {
   const navigate = useNavigate();
   const { user } = useSelector(store => store.auth);
 
@@ -36,11 +36,11 @@ function Home() {
   const [activeFilter, setActiveFilter] = useState("all");
   const [isMobile, setIsMobile] = useState(false);
 
-  const [darkMode, setDarkMode] = useState(() => 
+  const [darkMode, setDarkMode] = useState(() =>
     localStorage.getItem("theme") === "dark" ||
     (!localStorage.getItem("theme") && window.matchMedia("(prefers-color-scheme: dark)").matches)
   );
-  
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // ✅ Mobile check
@@ -123,7 +123,11 @@ function Home() {
     try {
       await axios.post(
         "https://vercel-backend-one-sepia.vercel.app/api/expense/insert",
-        formData,
+        {
+          ...formData,
+          ...injectedMeta,
+        },
+
         { withCredentials: true }
       );
 
@@ -141,7 +145,7 @@ function Home() {
 
       // Close modal
       setIsModalOpen(false);
-      
+
       // Refresh expenses
       fetchExpenses();
     } catch {
@@ -217,13 +221,13 @@ function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800 pt-16 pb-8">
-      <ToastContainer 
-        position={isMobile ? "top-center" : "top-right"} 
+      <ToastContainer
+        position={isMobile ? "top-center" : "top-right"}
         autoClose={3000}
         theme={darkMode ? "dark" : "light"}
       />
 
-      
+
 
       {/* Add Expense Floating Button */}
       <button
@@ -248,11 +252,10 @@ function Home() {
                       ? fetchExpenses()
                       : filterExpenses({ period })
                   }
-                  className={`px-4 py-2 rounded-full text-sm whitespace-nowrap ${
-                    activeFilter === period
+                  className={`px-4 py-2 rounded-full text-sm whitespace-nowrap ${activeFilter === period
                       ? "bg-blue-600 text-white"
                       : "bg-slate-100 dark:bg-gray-700 text-slate-700 dark:text-gray-300"
-                  }`}
+                    }`}
                 >
                   {period === "day" && "📅 Today"}
                   {period === "week" && "📆 Week"}
@@ -273,11 +276,10 @@ function Home() {
                     ? fetchExpenses()
                     : filterExpenses({ period })
                 }
-                className={`px-4 py-2 rounded-lg ${
-                  activeFilter === period
+                className={`px-4 py-2 rounded-lg ${activeFilter === period
                     ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300"
                     : "text-slate-600 dark:text-gray-400 hover:bg-slate-100 dark:hover:bg-gray-700"
-                }`}
+                  }`}
               >
                 {period.toUpperCase()}
               </button>
@@ -309,11 +311,10 @@ function Home() {
             </div>
           </div>
 
-          <div className={`rounded-xl sm:rounded-2xl p-4 sm:p-6 text-white shadow-lg ${
-            summary.balance >= 0
+          <div className={`rounded-xl sm:rounded-2xl p-4 sm:p-6 text-white shadow-lg ${summary.balance >= 0
               ? "bg-gradient-to-br from-blue-500 to-cyan-600"
               : "bg-gradient-to-br from-orange-500 to-red-600"
-          }`}>
+            }`}>
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-blue-100 text-xs sm:text-sm font-medium">Balance</p>
@@ -352,19 +353,19 @@ function Home() {
             <div className="bg-slate-50 dark:bg-gray-700 p-4 rounded-lg">
               <p className="text-sm text-slate-600 dark:text-gray-300">Most Used Category</p>
               <p className="text-lg font-semibold text-slate-800 dark:text-white">
-                {expenses.length > 0 
-                  ? categories.find(c => c.value === expenses.reduce((a, b) => 
-                      expenses.filter(e => e.category === a.category).length > 
+                {expenses.length > 0
+                  ? categories.find(c => c.value === expenses.reduce((a, b) =>
+                    expenses.filter(e => e.category === a.category).length >
                       expenses.filter(e => e.category === b.category).length ? a : b
-                    ).category)?.label.split(" ")[0] || "None"
+                  ).category)?.label.split(" ")[0] || "None"
                   : "None"}
               </p>
             </div>
             <div className="bg-slate-50 dark:bg-gray-700 p-4 rounded-lg">
               <p className="text-sm text-slate-600 dark:text-gray-300">Last Transaction</p>
               <p className="text-lg font-semibold text-slate-800 dark:text-white">
-                {filteredExpenses.length > 0 
-                  ? filteredExpenses[0].date?.split("T")[0] 
+                {filteredExpenses.length > 0
+                  ? filteredExpenses[0].date?.split("T")[0]
                   : "None"}
               </p>
             </div>
@@ -426,9 +427,8 @@ function Home() {
                             {categoryInfo.icon}
                           </div>
                           <div>
-                            <span className={`text-base font-bold ${
-                              exp.type === "spent" ? "text-red-600" : "text-green-600"
-                            }`}>
+                            <span className={`text-base font-bold ${exp.type === "spent" ? "text-red-600" : "text-green-600"
+                              }`}>
                               {exp.type === "spent" ? "-" : "+"}₹{exp.amount}
                             </span>
                             <p className="text-slate-600 dark:text-gray-300 text-xs capitalize">{exp.category}</p>
@@ -477,9 +477,8 @@ function Home() {
                       </div>
 
                       <div className="flex items-center space-x-2 sm:space-x-3">
-                        <span className={`text-base sm:text-lg font-bold ${
-                          exp.type === "spent" ? "text-red-600" : "text-green-600"
-                        }`}>
+                        <span className={`text-base sm:text-lg font-bold ${exp.type === "spent" ? "text-red-600" : "text-green-600"
+                          }`}>
                           {exp.type === "spent" ? "-" : "+"}₹{exp.amount}
                         </span>
                         <button
