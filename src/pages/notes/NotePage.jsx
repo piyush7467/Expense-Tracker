@@ -1,15 +1,14 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import AddNoteModal from "./AddNoteModel";
+
 
 
 const NotesPage = () => {
     const [notes, setNotes] = useState([]);
     const [filter, setFilter] = useState("all");
     const [openModal, setOpenModal] = useState(false);
-
-
 
 
     const fetchNotes = useCallback(async () => {
