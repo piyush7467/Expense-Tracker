@@ -46,47 +46,47 @@ const router = createBrowserRouter([
       <>
         <Navbar />
         <PrivateRoute>
-          <YearPage />
+          <Home />
         </PrivateRoute>
       </>
     ),
   },
 
-  {
-    path: "/dashboard/general/:year",
-    element: (
-      <>
-        <Navbar />
-        <PrivateRoute>
-          <MonthPage />
-        </PrivateRoute>
-      </>
-    ),
-  },
+  // {
+  //   path: "/dashboard/general/:year",
+  //   element: (
+  //     <>
+  //       <Navbar />
+  //       <PrivateRoute>
+  //         <MonthPage />
+  //       </PrivateRoute>
+  //     </>
+  //   ),
+  // },
 
-  {
-    path: "/dashboard/general/:year/:month",
-    element: (
-      <>
-        <Navbar />
-        <PrivateRoute>
-          <WeekPage />
-        </PrivateRoute>
-      </>
-    ),
-  },
+  // {
+  //   path: "/dashboard/general/:year/:month",
+  //   element: (
+  //     <>
+  //       <Navbar />
+  //       <PrivateRoute>
+  //         <WeekPage />
+  //       </PrivateRoute>
+  //     </>
+  //   ),
+  // },
 
-  {
-    path: "/dashboard/general/:year/:month/:week",
-    element: (
-      <>
-        <Navbar />
-        <PrivateRoute>
-          <GeneralExpenseWrapper />
-        </PrivateRoute>
-      </>
-    ),
-  },
+  // {
+  //   path: "/dashboard/general/:year/:month/:week",
+  //   element: (
+  //     <>
+  //       <Navbar />
+  //       <PrivateRoute>
+  //         <GeneralExpenseWrapper />
+  //       </PrivateRoute>
+  //     </>
+  //   ),
+  // },
   
 
   {
