@@ -32,54 +32,54 @@ const Dashboard = () => {
       iconColor: "bg-yellow-100 dark:bg-yellow-900 text-yellow-600 dark:text-yellow-300",
       route: "/dashboard/notes"
     },
-    {
-      id: 3,
-      title: "Special Context",
-      description: "Trips, events, projects & more",
-      icon: "🎯",
-      color: "from-purple-500 to-pink-500",
-      bgColor: "bg-purple-50 dark:bg-purple-900/20",
-      iconColor: "bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300",
-      route: "/dashboard/special"
-    },
-    {
-      id: 4,
-      title: "Analytics",
-      description: "View spending insights & reports",
-      icon: "📈",
-      color: "from-green-500 to-emerald-500",
-      bgColor: "bg-green-50 dark:bg-green-900/20",
-      iconColor: "bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-300",
-      route: "/dashboard/analytics"
-    },
-    {
-      id: 5,
-      title: "Categories",
-      description: "Manage expense categories",
-      icon: "🏷️",
-      color: "from-red-500 to-pink-500",
-      bgColor: "bg-red-50 dark:bg-red-900/20",
-      iconColor: "bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300",
-      route: "/dashboard/categories"
-    },
-    {
-      id: 6,
-      title: "Settings",
-      description: "Account & app preferences",
-      icon: "⚙️",
-      color: "from-gray-500 to-slate-500",
-      bgColor: "bg-gray-50 dark:bg-gray-900/20",
-      iconColor: "bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-300",
-      route: "/dashboard/settings"
-    }
+    // {
+    //   id: 3,
+    //   title: "Special Context",
+    //   description: "Trips, events, projects & more",
+    //   icon: "🎯",
+    //   color: "from-purple-500 to-pink-500",
+    //   bgColor: "bg-purple-50 dark:bg-purple-900/20",
+    //   iconColor: "bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300",
+    //   route: "/dashboard/special"
+    // },
+    // {
+    //   id: 4,
+    //   title: "Analytics",
+    //   description: "View spending insights & reports",
+    //   icon: "📈",
+    //   color: "from-green-500 to-emerald-500",
+    //   bgColor: "bg-green-50 dark:bg-green-900/20",
+    //   iconColor: "bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-300",
+    //   route: "/dashboard/analytics"
+    // },
+    // {
+    //   id: 5,
+    //   title: "Categories",
+    //   description: "Manage expense categories",
+    //   icon: "🏷️",
+    //   color: "from-red-500 to-pink-500",
+    //   bgColor: "bg-red-50 dark:bg-red-900/20",
+    //   iconColor: "bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300",
+    //   route: "/dashboard/categories"
+    // },
+    // {
+    //   id: 6,
+    //   title: "Settings",
+    //   description: "Account & app preferences",
+    //   icon: "⚙️",
+    //   color: "from-gray-500 to-slate-500",
+    //   bgColor: "bg-gray-50 dark:bg-gray-900/20",
+    //   iconColor: "bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-300",
+    //   route: "/dashboard/settings"
+    // }
   ];
 
-  const stats = [
-    { label: "Today's Expenses", value: "₹0", change: "+0%", color: "text-red-500" },
-    { label: "This Month", value: "₹0", change: "+0%", color: "text-blue-500" },
-    { label: "Notes Count", value: "0", change: "+0", color: "text-yellow-500" },
-    { label: "Balance", value: "₹0", change: "0%", color: "text-green-500" },
-  ];
+  // const stats = [
+  //   { label: "Today's Expenses", value: "₹0", change: "+0%", color: "text-red-500" },
+  //   { label: "This Month", value: "₹0", change: "+0%", color: "text-blue-500" },
+  //   { label: "Notes Count", value: "0", change: "+0", color: "text-yellow-500" },
+  //   { label: "Balance", value: "₹0", change: "0%", color: "text-green-500" },
+  // ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800 pt-16 pb-8">
@@ -111,7 +111,7 @@ const Dashboard = () => {
         </div>
 
         {/* Quick Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        {/* <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {stats.map((stat, index) => (
             <div 
               key={index}
@@ -126,7 +126,7 @@ const Dashboard = () => {
               </div>
             </div>
           ))}
-        </div>
+        </div> */}
 
         {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -190,9 +190,9 @@ const Dashboard = () => {
           </div>
 
           {/* Right Sidebar */}
-          <div className="space-y-6">
+          {/* <div className="space-y-6"> */}
             {/* User Profile Card */}
-            <div className="bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl p-6 text-white">
+            {/* <div className="bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl p-6 text-white">
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-2xl">
                   👤
@@ -212,10 +212,10 @@ const Dashboard = () => {
                   <p className="text-lg font-bold">0</p>
                 </div>
               </div>
-            </div>
+            </div> */}
 
             {/* Quick Tips */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-gray-700">
+            {/* <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-gray-700">
               <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-4">💡 Quick Tips</h3>
               <ul className="space-y-3">
                 <li className="flex items-start gap-2">
@@ -235,10 +235,10 @@ const Dashboard = () => {
                   <span className="text-sm text-slate-600 dark:text-gray-300">Set monthly budgets to control spending</span>
                 </li>
               </ul>
-            </div>
+            </div> */}
 
             {/* Quick Add */}
-            <div className="bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl p-6 text-white">
+            {/* <div className="bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl p-6 text-white">
               <h3 className="text-lg font-bold mb-4">🚀 Quick Actions</h3>
               <div className="space-y-3">
                 <button 
@@ -260,8 +260,11 @@ const Dashboard = () => {
                   </div>
                 </button>
               </div>
-            </div>
-          </div>
+            </div> */}
+
+          {/* </div> */}
+
+          
         </div>
       </div>
     </div>
