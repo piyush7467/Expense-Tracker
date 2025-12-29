@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
-import AddNoteModal from "./AddNoteModal";
+import AddNoteModal from "./AddNoteModel";
+
 
 const NotesPage = () => {
   const [notes, setNotes] = useState([]);
