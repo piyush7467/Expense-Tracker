@@ -10,6 +10,7 @@ import YearPage from "./pages/general/YearPage";
 import MonthPage from "./pages/general/MonthPage";
 import WeekPage from "./pages/general/Weekpage";
 import GeneralExpenseWrapper from "./pages/general/GeneralExpenseWrapper";
+import NotesPage from "./pages/notes/NotePage";
 
 
 const router = createBrowserRouter([
@@ -47,6 +48,18 @@ const router = createBrowserRouter([
         <Navbar />
         <PrivateRoute>
           <Home />
+        </PrivateRoute>
+      </>
+    ),
+  },
+
+   {
+    path: "/dashboard/notes",
+    element: (
+      <>
+        <Navbar />
+        <PrivateRoute>
+          <NotesPage />
         </PrivateRoute>
       </>
     ),
