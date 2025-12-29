@@ -53,7 +53,7 @@ const AddNoteModal = ({ onClose, onSuccess }) => {
       onSuccess();
       onClose();
 
-      // reset form (safe)
+      // Reset form
       setForm({
         text: "",
         amount: "",
@@ -69,86 +69,134 @@ const AddNoteModal = ({ onClose, onSuccess }) => {
 
   return (
     <div
-      className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+      className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center z-50 p-4"
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-xl p-6 w-full max-w-md"
+        className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md"
         onClick={(e) => e.stopPropagation()}
       >
-        <h3 className="text-xl font-bold mb-4">Add Note</h3>
-
-        <form onSubmit={submitNote} className="space-y-3">
-          <textarea
-            name="text"
-            placeholder="Note..."
-            value={form.text}
-            onChange={handleChange}
-            className="w-full border rounded p-2 resize-none"
-            rows={3}
-          />
-
-          <input
-            name="amount"
-            type="number"
-            placeholder="Amount (optional)"
-            value={form.amount}
-            onChange={handleChange}
-            className="w-full border rounded p-2"
-          />
-
-          <select
-            name="direction"
-            value={form.direction}
-            onChange={handleChange}
-            className="w-full border rounded p-2"
+        {/* Modal Header */}
+        <div className="flex justify-between items-center border-b border-slate-200 dark:border-gray-700 p-6">
+          <h3 className="text-xl font-bold text-slate-800 dark:text-white">
+            Add New Note
+          </h3>
+          <button
+            onClick={onClose}
+            className="text-slate-500 hover:text-slate-700 dark:text-gray-400 dark:hover:text-gray-200 text-2xl"
           >
-            <option value="given">Given</option>
-            <option value="taken">Taken</option>
-          </select>
+            ×
+          </button>
+        </div>
 
-          <input
-            name="person"
-            placeholder="Person (optional)"
-            value={form.person}
-            onChange={handleChange}
-            className="w-full border rounded p-2"
-          />
-
-          <select
-            name="contextType"
-            value={form.contextType}
-            onChange={handleChange}
-            className="w-full border rounded p-2"
-          >
-            <option value="general">General</option>
-            <option value="special">Special</option>
-          </select>
-
-          {form.contextType === "special" && (
-            <input
-              name="specialTitle"
-              placeholder="Special title (Trip / Event)"
-              value={form.specialTitle}
+        {/* Modal Body */}
+        <form onSubmit={submitNote} className="p-6 space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-700 dark:text-gray-300 mb-1">
+              Note Text *
+            </label>
+            <textarea
+              name="text"
+              placeholder="Type your note here..."
+              value={form.text}
               onChange={handleChange}
-              className="w-full border rounded p-2"
+              className="w-full p-3 border border-slate-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white resize-none"
+              rows={3}
+              required
             />
-          )}
+          </div>
 
-          <div className="flex justify-end gap-2 pt-3">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 dark:text-gray-300 mb-1">
+                Amount (₹)
+              </label>
+              <input
+                name="amount"
+                type="number"
+                placeholder="Optional"
+                value={form.amount}
+                onChange={handleChange}
+                className="w-full p-3 border border-slate-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-700 dark:text-gray-300 mb-1">
+                Direction
+              </label>
+              <select
+                name="direction"
+                value={form.direction}
+                onChange={handleChange}
+                className="w-full p-3 border border-slate-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+              >
+                <option value="given">Given</option>
+                <option value="taken">Taken</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-700 dark:text-gray-300 mb-1">
+              Person (Optional)
+            </label>
+            <input
+              name="person"
+              placeholder="Person name"
+              value={form.person}
+              onChange={handleChange}
+              className="w-full p-3 border border-slate-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 dark:text-gray-300 mb-1">
+                Context Type
+              </label>
+              <select
+                name="contextType"
+                value={form.contextType}
+                onChange={handleChange}
+                className="w-full p-3 border border-slate-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+              >
+                <option value="general">General</option>
+                <option value="special">Special</option>
+              </select>
+            </div>
+
+            {form.contextType === "special" && (
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-gray-300 mb-1">
+                  Special Title *
+                </label>
+                <input
+                  name="specialTitle"
+                  placeholder="Trip / Event name"
+                  value={form.specialTitle}
+                  onChange={handleChange}
+                  className="w-full p-3 border border-slate-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                  required={form.contextType === "special"}
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Modal Footer */}
+          <div className="flex gap-3 pt-6 border-t border-slate-200 dark:border-gray-700">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 bg-gray-200 rounded"
+              className="flex-1 py-3 border border-slate-300 dark:border-gray-600 text-slate-700 dark:text-gray-300 rounded-lg font-semibold hover:bg-slate-50 dark:hover:bg-gray-700 transition-all duration-200"
             >
               Cancel
             </button>
-
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg"
             >
-              Save
+              💾 Save Note
             </button>
           </div>
         </form>
