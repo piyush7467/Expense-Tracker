@@ -170,7 +170,7 @@ const Dashboard = () => {
             </div>
 
             {/* Recent Activity */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-gray-700">
+            {/* <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-gray-700">
               <h2 className="text-xl font-bold text-slate-800 dark:text-white mb-4">Recent Activity</h2>
               <div className="space-y-4">
                 <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-gray-700/50 rounded-lg">
@@ -186,7 +186,7 @@ const Dashboard = () => {
                   <span className="text-sm text-slate-500 dark:text-gray-400">Just now</span>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
 
           {/* Right Sidebar */}

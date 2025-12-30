@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
 
 const AddNoteModal = ({ onClose, onSuccess }) => {
@@ -72,6 +72,9 @@ const AddNoteModal = ({ onClose, onSuccess }) => {
       className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center z-50 p-4"
       onClick={onClose}
     >
+       <ToastContainer position="top-right" autoClose={3000} />
+
+
       <div
         className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md"
         onClick={(e) => e.stopPropagation()}

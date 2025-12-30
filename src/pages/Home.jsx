@@ -411,13 +411,13 @@ function Home({ injectedMeta = {} }) {
               <span className="bg-slate-100 dark:bg-gray-700 text-slate-600 dark:text-gray-300 px-2 py-1 rounded-full text-xs sm:text-sm font-medium">
                 {filteredExpenses.length} transactions
               </span>
-              <button
+              {/* <button
                 onClick={openModal}
                 className="md:hidden bg-blue-600 text-white p-2 rounded-lg"
                 title="Add Transaction"
               >
                 +
-              </button>
+              </button> */}
             </div>
           </div>
 
